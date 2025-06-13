@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ACCESS GRANTED</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      color: #00ff00;
+      font-family: 'Courier New', monospace;
+      overflow: hidden;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
+    .terminal {
+      max-width: 800px;
+      margin: 100px auto;
+      padding: 30px;
+      background-color: rgba(0, 0, 0, 0.7);
+      border: 2px solid #00ff00;
+      box-shadow: 0 0 20px #00ff00;
+    }
+
+    #typewriter {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-size: 1.2em;
+    }
+
+    .cursor {
+      display: inline-block;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      from, to { color: transparent }
+      50% { color: #00ff00 }
+    }
+
+    @media (max-width: 600px) {
+      .terminal {
+        margin: 50px 10px;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="matrix"></canvas>
+
+  <div class="terminal">
+    <div id="typewriter"></div><span class="cursor">█</span>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+
+    const letters = '0101010101011101001010101011';
+    const fontSize = 16;
+    const columns = canvas.width / fontSize;
+
+    const drops = Array.from({ length: columns }).fill(1);
+
+    function draw() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#0F0';
+      ctx.font = `${fontSize}px monospace`;
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+
+    setInterval(draw, 33);
+
+    const text = [
+      "WELCOME TO MY DOMAIN",
+      "> Initializing system...",
+      "> Access: GRANTED",
+      "> Welcome, Commander.",
+      "> System running at full power."
+    ];
+
+    let line = 0;
+    let char = 0;
+    const speed = 40;
+    const element = document.getElementById("typewriter");
+
+    function typeLine() {
+      if (line < text.length) {
+        if (char < text[line].length) {
+          element.innerHTML += text[line].charAt(char);
+          char++;
+          setTimeout(typeLine, speed);
+        } else {
+          element.innerHTML += '\n';
+          line++;
+          char = 0;
+          setTimeout(typeLine, speed * 5);
+        }
+      }
+    }
+
+    window.onload = typeLine;
+  </script>
+</body>
+</html>
